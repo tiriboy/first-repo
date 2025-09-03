@@ -1,1 +1,1 @@
-An api project to enforce DRF knowledge
+A basic store api built only to enforce DRF knowledfe
