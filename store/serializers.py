@@ -52,6 +52,11 @@ class LoginSerializer(serializers.Serializer):
              raise serializers.ValidationError
         data["user"] = user
         return data
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username","email"]    
                               
 
 

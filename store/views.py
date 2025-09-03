@@ -4,7 +4,7 @@ from urllib import request
 from rest_framework.response import Response
 from .models import Product,Category, Review
 from django.shortcuts import get_object_or_404
-from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, RegisterSerializer, LoginSerializer
+from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, RegisterSerializer, LoginSerializer, UserSerializer
 from rest_framework import status
 from django.db import models
 from rest_framework import viewsets
@@ -16,6 +16,7 @@ from .permissions import ProductsAndCategoryPermission
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework import permissions
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -83,5 +84,15 @@ class LogoutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"Logout successful"})
+
+class UserViewSet(viewsets.ModelViewSet):
+        queryset = User.objects.all()
+        serializer_class = UserSerializer
+        permission_classes = [permissions.IsAdminUser]
+        filter_backends = [SearchFilter, OrderingFilter]
+        search_fields = ['username', 'email']
+        ordering_fields = ['username'] 
+        
+
 
 
