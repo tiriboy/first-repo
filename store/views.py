@@ -4,7 +4,7 @@ from urllib import request
 from rest_framework.response import Response
 from .models import Product,Category, Review
 from django.shortcuts import get_object_or_404
-from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, RegisterSerializer, LoginSerializer, UserSerializer
+from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer,UserSerializer
 from rest_framework import status
 from django.db import models
 from rest_framework import viewsets
@@ -12,9 +12,6 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .filters import ProductFilter
-from .permissions import ProductsAndCategoryPermission
-from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
 from rest_framework import permissions
 from django.contrib.auth.models import User
 
@@ -57,33 +54,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     lookup_field = 'id'
 
-
-class RegisterView(APIView):
-    permission_classes =  [permissions.AllowAny]
-    def post(self,request):
-        serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token,_= Token.objects.get_or_create(user=user)
-        
-
-        return Response({"username":user.username,"key":token.key,"status":status.HTTP_201_CREATED}) 
        
-class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user=serializer.validated_data["user"]
-        token,_= Token.objects.get_or_create(user=user)
-
-        return Response({"username":serializer.validated_data["username"],"key":token.key,"status":status.HTTP_200_OK})
-
-class LogoutView(APIView):
-    permission_classes =[permissions.IsAuthenticated]
-    def post(self, request):
-        request.user.auth_token.delete()
-        return Response({"Logout successful"})
 
 class UserViewSet(viewsets.ModelViewSet):
         queryset = User.objects.all()
